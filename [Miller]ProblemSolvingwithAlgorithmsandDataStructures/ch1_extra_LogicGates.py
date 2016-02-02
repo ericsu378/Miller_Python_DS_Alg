@@ -44,14 +44,26 @@ class BinaryGate(LogicGate):
     def getPinA(self):
         if self.pinA == None:
             return int(input("Enter Pin A input for gate "+ self.getLabel()+"-->"))
+        elif self.pinA == 1 or self.pinA == 0:
+            return self.pinA
+        # Redundant Maybe?
         else:
             return self.pinA.getFrom().getOutput()
 
     def getPinB(self):
         if self.pinB == None:
             return int(input("Enter Pin B input for gate "+ self.getLabel()+"-->"))
+        elif self.pinB == 1 or self.pinB == 0:
+            return self.pinB
+        # Redundanct Maybe?
         else:
             return self.pinB.getFrom().getOutput()
+
+    def setPinA(self, value):
+        self.pinA = int(value)
+
+    def setPinB(self, value):
+        self.pinB = int(value)
 
     def setNextPin(self, source):
         if self.pinA == None:
@@ -71,8 +83,14 @@ class UnaryGate(LogicGate):
     def getPin(self):
         if self.pin == None:
             return int(input("Enter Pin input for gate "+ self.getLabel()+"-->"))
+        elif self.pin == 1 or self.pin == 0:
+            return self.pin
+        # Redundant Maybe?
         else:
             return self.pin.getFrom().getOutput()
+
+    def setPin(self, value):
+        self.pin = int(value)
 
     def setNextPin(self, source):
         if self.pin == None:
@@ -180,6 +198,101 @@ class NandGate(BinaryGate):
         else:
             return 1
 
+# Extra: Research other types of gates that exist (such as NAND, NOR, and XOR). Add them to the circuit hierarchy.
+# How much additional coding did you need to do?
+# Answer: Not much. Just need to implement XOR (if a==b, return 0, else return 1), XNOR (reverse XOR)
+
+class XOrGate(BinaryGate):
+
+    def __init__(self, n):
+        BinaryGate.__init__(self, n)
+
+    def performGateLogic(self):
+
+        a = self.getPinA()
+        b = self.getPinB()
+        if a==b:
+            return 0
+        else:
+            return 1
+
+
+class XNorGate(BinaryGate):
+
+    def __init__(self, n):
+        BinaryGate.__init__(self, n)
+
+    def performGateLogic(self):
+
+        a = self.getPinA()
+        b = self.getPinB()
+        if a==b:
+            return 1
+        else:
+            return 0
+
+
+# Extra: The most simple arithmetic circuit is known as the half-adder. Research the simple half-adder circuit.
+# Implement this circuit.
+# 2 gates, XOR and AND gate.
+
+def HalfAdder(inputA, inputB):
+
+    g1 = XOrGate("G1")
+    g1.setPinA(inputA)
+    g1.setPinB(inputB)
+    g2 = AndGate("G2")
+    g2.setPinA(inputA)
+    g2.setPinB(inputB)
+    print(g1.getOutput())
+    print(g2.getOutput())
+    return (g1.getOutput(), g2.getOutput())
+
+
+# Extra: Now extend that circuit and implement an 8 bit full-adder.
+def FullAdder(inputC, inputA, inputB):
+    (sum1, carry1) = HalfAdder(inputA, inputB)
+    (sum2, carry2) = HalfAdder(inputC, sum1)
+    g1 = OrGate('G1')
+    g1.setPinA(carry2)
+    g1.setPinB(carry1)
+    print "Full Adder Input: C = %d, A = %d, B = %d \nFull Adder Output: sum = %d, carry = %d" % (inputC, inputA, inputB, sum2, g1.getOutput())
+
+
+# Extra: The circuit simulation shown in this chapter works in a backward direction. In other words, given a circuit,
+# the output is produced by working back through the input values, which in turn cause other outputs to be queried.
+# This continues until external input lines are found, at which point the user is asked for values.
+# Modify the implementation so that the action is in the forward direction;
+# upon receiving inputs the circuit produces an output.
+def ForwardChapterSim(inputA1, inputB1, inputA2, inputB2):
+
+    A1 = inputA1
+    B1 = inputB1
+    A2 = inputA2
+    B2 = inputB2
+
+    g1 = AndGate("G1")
+    g2 = AndGate("G2")
+    g3 = OrGate("G3")
+    g4 = NotGate("G4")
+
+    g1.setPinA(A1)
+    g1.setPinB(B1)
+    g2.setPinA(A2)
+    g2.setPinB(B2)
+    g3_A = g1.getOutput()
+    g3_B = g2.getOutput()
+
+    g3.setPinA(g3_A)
+    g3.setPinB(g3_B)
+    g4_A = g3.getOutput()
+
+    g4.setPin(g4_A)
+    output = g4.getOutput()
+    print "G4 Output = " + str(output)
+
+
+
 
 def main():
 
@@ -193,20 +306,24 @@ def main():
     c3 = Connector(g3,g4)
     print(g4.getOutput())
 
-    # NOT (( A and B) or (C and D))
-    g5 = AndGate("G5")
-    g6 = AndGate("G6")
-    g7 = NorGate("G7")
-    c4 = Connector(g5, g7)
-    c5 = Connector(g6, g7)
-    print(g7.getOutput())
+    # # NOT (( A and B) or (C and D))
+    # g5 = AndGate("G5")
+    # g6 = AndGate("G6")
+    # g7 = NorGate("G7")
+    # c4 = Connector(g5, g7)
+    # c5 = Connector(g6, g7)
+    # print(g7.getOutput())
+    #
+    # # NOT( A and B ) and NOT (C and D)
+    # g8 = NandGate("G8")
+    # g9 = NandGate("G9")
+    # g10 = AndGate("G10")
+    # c6 = Connector(g8, g10)
+    # c7 = Connector(g9, g10)
+    # print(g10.getOutput())
 
-    # NOT( A and B ) and NOT (C and D)
-    g8 = NandGate("G8")
-    g9 = NandGate("G9")
-    g10 = AndGate("G10")
-    c6 = Connector(g8, g10)
-    c7 = Connector(g9, g10)
-    print(g10.getOutput())
-
+# main()
+HalfAdder(0,1)
+FullAdder(1, 0, 0)
 main()
+ForwardChapterSim(1, 1, 1, 0)
