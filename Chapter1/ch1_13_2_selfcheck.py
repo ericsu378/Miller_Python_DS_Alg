@@ -1,10 +1,8 @@
-__author__ = 'ESU_2'
-
 # Problem Solving with Algorithms and Data Structures [Online]
 # http://interactivepython.org/
 # Brad Miller, David Ranum
 
-# 1.7 Logic Gates
+# 1.13.2 Inheritance: Logic Gates and Circuits
 
 # System Diagram
 
@@ -17,22 +15,42 @@ __author__ = 'ESU_2'
 # IS-A relationship (which requires inheritance)
 # HAS-A relationships (with no inheritance)
 
+# Self Check
+# Create a two new gate classes, one called NorGate the other called NandGate.
+# NandGates work like AndGates that have a Not attached to the output.
+# NorGates work lake OrGates that have a Not attached to the output.
+
+# Create a series of gates that prove the following equality
+# NOT (( A and B) or (C and D)) is that same as NOT( A and B ) and NOT (C and D).
+# Make sure to use some of your new gates in the simulation.
+
+# Additional Programming Exercises [1.17]
+# 10) Research other types of gates that exist (such as NAND, NOR, and XOR). Add them to the circuit hierarchy.
+#     How much additional coding did you need to do?
+# 11) The most simple arithmetic circuit is known as the half-adder. Research the simple half-adder circuit.
+#     Implement this circuit.
+# 12) Now extend that circuit and implement an 8 bit full-adder.
+# 13) The circuit simulation shown in this chapter works in a backward direction.
+#     In other words, given a circuit, the output is produced by working back through the input values,
+#     which in turn cause other outputs to be queried. This continues until external input lines are found,
+#     at which point the user is asked for values. Modify the implementation so that the action is in the
+#     forward direction; upon receiving inputs the circuit produces an output.
 
 class LogicGate:
 
     def __init__(self, n):
-        self.label = n # name
+        self.name = n # name
         self.output = None # output
 
-    def getLabel(self):
-        return self.label
+    def getName(self):
+        return self.name
 
     def getOutput(self):
         self.output = self.performGateLogic()
         return self.output
 
 
-# Each gate input can be either external (user) or from output of aconnected gate
+# Each gate input can be either external (user) or from output of a connected gate
 class BinaryGate(LogicGate):
 
     def __init__(self, n):
@@ -43,27 +61,27 @@ class BinaryGate(LogicGate):
 
     def getPinA(self):
         if self.pinA == None:
-            return int(input("Enter Pin A input for gate "+ self.getLabel()+"-->"))
-        elif self.pinA == 1 or self.pinA == 0:
-            return self.pinA
-        # Redundant Maybe?
+            return int(input("Enter Pin A input for gate " + self.getName() + "-->"))
+        # elif self.pinA == 1 or self.pinA == 0:
+        #     return self.pinA
+        # # Redundant Maybe?
         else:
             return self.pinA.getFrom().getOutput()
 
     def getPinB(self):
         if self.pinB == None:
-            return int(input("Enter Pin B input for gate "+ self.getLabel()+"-->"))
-        elif self.pinB == 1 or self.pinB == 0:
-            return self.pinB
-        # Redundanct Maybe?
+            return int(input("Enter Pin B input for gate " + self.getName() + "-->"))
+        # elif self.pinB == 1 or self.pinB == 0:
+        #     return self.pinB
+        # # Redundanct Maybe?
         else:
             return self.pinB.getFrom().getOutput()
-
-    def setPinA(self, value):
-        self.pinA = int(value)
-
-    def setPinB(self, value):
-        self.pinB = int(value)
+    #
+    # def setPinA(self, value):
+    #     self.pinA = int(value)
+    #
+    # def setPinB(self, value):
+    #     self.pinB = int(value)
 
     def setNextPin(self, source):
         if self.pinA == None:
@@ -72,7 +90,7 @@ class BinaryGate(LogicGate):
             if self.pinB == None:
                 self.pinB = source
             else:
-                raise RuntimeError("Error: NO EMPTY PINS")
+                raise RuntimeError("Error: NO EMPTY PINS on this gate")
 
 class UnaryGate(LogicGate):
 
@@ -82,21 +100,21 @@ class UnaryGate(LogicGate):
 
     def getPin(self):
         if self.pin == None:
-            return int(input("Enter Pin input for gate "+ self.getLabel()+"-->"))
-        elif self.pin == 1 or self.pin == 0:
-            return self.pin
-        # Redundant Maybe?
+            return int(input("Enter Pin input for gate " + self.getName() + "-->"))
+        # elif self.pin == 1 or self.pin == 0:
+        #     return self.pin
+        # # Redundant Maybe?
         else:
             return self.pin.getFrom().getOutput()
 
-    def setPin(self, value):
-        self.pin = int(value)
+    # def setPin(self, value):
+    #     self.pin = int(value)
 
     def setNextPin(self, source):
         if self.pin == None:
             self.pin = source
         else:
-            raise RuntimeError("Error: NO EMPTY PINS")
+            raise RuntimeError("Cannot Connect: NO EMPTY PINS on this gate")
 
 
 class AndGate(BinaryGate):
@@ -135,12 +153,10 @@ class NotGate(UnaryGate):
         UnaryGate.__init__(self,n)
 
     def performGateLogic(self):
-
-        pin = self.getPin()
-        if pin == 0:
-            return 1
-        if pin == 1:
+        if self.getPin():
             return 0
+        else:
+            return 1
 
 
 # a Connector HAS-A LogicGate (connectors will have instances of LogicGate but are not part of the hierarchy)
@@ -256,7 +272,8 @@ def FullAdder(inputC, inputA, inputB):
     g1 = OrGate('G1')
     g1.setPinA(carry2)
     g1.setPinB(carry1)
-    print "Full Adder Input: C = %d, A = %d, B = %d \nFull Adder Output: sum = %d, carry = %d" % (inputC, inputA, inputB, sum2, g1.getOutput())
+    print("Full Adder Input: C = %d, A = %d, B = %d \nFull Adder Output: sum = %d, carry = %d") %(inputC, inputA, inputB, sum2, g1.getOutput())
+    # print("Full Adder Input: C = {}, A = {}, B = {}\nFull Adder Output: sum = {}, carry = {}").format(inputC, inputA, inputB, sum2, g1.getOutput())
 
 
 # Extra: The circuit simulation shown in this chapter works in a backward direction. In other words, given a circuit,
@@ -289,7 +306,7 @@ def ForwardChapterSim(inputA1, inputB1, inputA2, inputB2):
 
     g4.setPin(g4_A)
     output = g4.getOutput()
-    print "G4 Output = " + str(output)
+    print("G4 Output = " + str(output))
 
 
 
@@ -322,8 +339,10 @@ def main():
     # c7 = Connector(g9, g10)
     # print(g10.getOutput())
 
-# main()
-HalfAdder(0,1)
-FullAdder(1, 0, 0)
-main()
-ForwardChapterSim(1, 1, 1, 0)
+    # HalfAdder(0,1)
+    # FullAdder(1, 0, 0)
+    # ForwardChapterSim(1, 1, 1, 0)
+
+
+if __name__ == '__main__':
+    main()
