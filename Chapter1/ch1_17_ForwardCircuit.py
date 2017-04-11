@@ -29,9 +29,12 @@
 #     How much additional coding did you need to do?
 # 11) The most simple arithmetic circuit is known as the half-adder. Research the simple half-adder circuit.
 #     Implement this circuit.
-
-# See ch1_17_ForwardCircuit for a better implementation.
-# Covers 11, 12, and 13 of additional programming exercises.
+# 12) Now extend that circuit and implement an 8 bit full-adder.
+# 13) The circuit simulation shown in this chapter works in a backward direction.
+#     In other words, given a circuit, the output is produced by working back through the input values,
+#     which in turn cause other outputs to be queried. This continues until external input lines are found,
+#     at which point the user is asked for values. Modify the implementation so that the action is in the
+#     forward direction; upon receiving inputs the circuit produces an output.
 
 class LogicGate:
 
@@ -59,15 +62,24 @@ class BinaryGate(LogicGate):
     def getPinA(self):
         if self.pinA == None:
             return int(input("Enter Pin A input for gate " + self.getLabel() + "-->"))
+        # elif self.pinA == 1 or self.pinA == 0:
+        #     return self.pinA
         else:
             return self.pinA.getFrom().getOutput()
 
     def getPinB(self):
         if self.pinB == None:
             return int(input("Enter Pin B input for gate " + self.getLabel() + "-->"))
-
+        # elif self.pinB == 1 or self.pinB == 0:
+        #     return self.pinB
         else:
             return self.pinB.getFrom().getOutput()
+
+    # def setPinA(self, value):
+    #     self.pinA = int(value)
+    #
+    # def setPinB(self, value):
+    #     self.pinB = int(value)
 
     def setNextPin(self, source):
         if self.pinA == None:
@@ -78,7 +90,6 @@ class BinaryGate(LogicGate):
             else:
                 raise RuntimeError("Error: NO EMPTY PINS on this gate")
 
-
 class UnaryGate(LogicGate):
 
     def __init__(self, name):
@@ -88,8 +99,13 @@ class UnaryGate(LogicGate):
     def getPin(self):
         if self.pin == None:
             return int(input("Enter Pin input for gate " + self.getLabel() + "-->"))
+        # elif self.pin == 1 or self.pin == 0:
+        #     return self.pin
         else:
             return self.pin.getFrom().getOutput()
+
+    # def setPin(self, value):
+    #     self.pin = int(value)
 
     def setNextPin(self, source):
         if self.pin == None:
@@ -126,6 +142,15 @@ class OrGate(BinaryGate):
             return 0
         else:
             return 1
+
+
+class UnaryRepeater(UnaryGate):
+
+    def __init__(self, name):
+        UnaryGate.__init__(self, name)
+
+    def performGateLogic(self):
+        return self.getPin()
 
 
 class NotGate(UnaryGate):
@@ -263,6 +288,86 @@ class HalfAdder(BinaryGate):
         return Sum, Carry
 
 
+def HalfAdder():
+
+    # g1 = XOrGate("G1")
+    # # g1.setPinA(inputA)
+    # # g1.setPinB(inputB)
+    # g2 = AndGate("G2")
+    # # g2.setPinA(inputA)
+    # # g2.setPinB(inputB)
+    # print(g1.getOutput())
+    # print(g2.getOutput())
+
+    a = UnaryRepeater("A")
+    # print("After A = %d" %(a.getOutput()))
+    b = UnaryRepeater("B")
+    # print("After B = %e" % (b.getOutput()))
+    g1 = XOrGate("G1")
+    # print("After XOR: A = %d, B = %d" % (a.getOutput(), b.getOutput()))
+    g2 = AndGate("G2")
+    # print("After AND: A = %d, B = %d" % (a.getOutput(), b.getOutput()))
+
+    c1 = Connector(a, g1)
+    # print("After c1: A = %d, B = %d" % (a.getOutput(), b.getOutput()))
+
+    c3 = Connector(b, g1)
+    # print("After c2: A = %d, B = %d" % (a.getOutput(), b.getOutput()))
+
+    c2 = Connector(a, g2)
+    # print("After c3: A = %d, B = %d" % (a.getOutput(), b.getOutput()))
+
+    c4 = Connector(b, g2)
+    # print("After c4: A = %d, B = %d" % (a.getOutput(), b.getOutput()))
+
+    # print(g1.getOutput())
+    # print(g2.getOutput())
+
+
+# 12) Now extend that circuit and implement an 8 bit full-adder.
+def FullAdder(inputC, inputA, inputB):
+    (sum1, carry1) = HalfAdder(inputA, inputB)
+    (sum2, carry2) = HalfAdder(inputC, sum1)
+    g1 = OrGate('G1')
+    g1.setPinA(carry2)
+    g1.setPinB(carry1)
+    print("Full Adder Input: C = %d, A = %d, B = %d \nFull Adder Output: sum = %d, carry = %d" %(inputC, inputA, inputB, sum2, g1.getOutput()))
+    # print("Full Adder Input: C = {}, A = {}, B = {}\nFull Adder Output: sum = {}, carry = {}").format(inputC, inputA, inputB, sum2, g1.getOutput())
+
+
+# 13) The circuit simulation shown in this chapter works in a backward direction. In other words, given a circuit,
+#     the output is produced by working back through the input values, which in turn cause other outputs to be queried.
+#     This continues until external input lines are found, at which point the user is asked for values.
+#     Modify the implementation so that the action is in the forward direction;
+#     upon receiving inputs the circuit produces an output.
+def ForwardChapterSim(inputA1, inputB1, inputA2, inputB2):
+
+    A1 = inputA1
+    B1 = inputB1
+    A2 = inputA2
+    B2 = inputB2
+
+    g1 = AndGate("G1")
+    g2 = AndGate("G2")
+    g3 = OrGate("G3")
+    g4 = NotGate("G4")
+
+    g1.setPinA(A1)
+    g1.setPinB(B1)
+    g2.setPinA(A2)
+    g2.setPinB(B2)
+    g3_A = g1.getOutput()
+    g3_B = g2.getOutput()
+
+    g3.setPinA(g3_A)
+    g3.setPinB(g3_B)
+    g4_A = g3.getOutput()
+
+    g4.setPin(g4_A)
+    output = g4.getOutput()
+    print("G4 Output = " + str(output))
+
+
 def main():
 
     # # Chapter Simulation
@@ -291,9 +396,13 @@ def main():
     # c7 = Connector(g9, g10)
     # print(g10.getOutput())
 
-    # print("Additional Programming Exercise")
+    print("Additional Programming Exercise")
     # h1 = HalfAdder("H1")
     # print(h1.getOutput())
+    HalfAdder()
+    # FullAdder(1, 0, 0)
+    # ForwardChapterSim(1, 1, 1, 0)
+
 
 if __name__ == '__main__':
     main()
