@@ -9,69 +9,93 @@ __author__ = 'ESU_2'
 # 10. Design a class to represent a playing card. Now design a class to represent a deck of
 # cards. Using these two classes, implement a favorite card game.
 
+# Game: War
+
 import random
 # A playing card needs 3 attributes, rank, suit, and blackjack value
 # Suit power is Diamonds > Hearts > Spades > Clubs
-# Card Value is from 2 to Ace
+# Card values range from 2 to Ace
 class Card:
 
     def __init__(self, rank, suit):
 
         self.rank = rank
-
-        # For Jack, Queen, and King, mark card with value 10
-        if self.rank > 10:
-            self.value = 10
-        else:
-            self.value = self.rank
+        self.card_name = None
+        self.card_value = None
+        self.suit_name = None
+        self.suit_value = suit
 
         # Define Suits
-        if suit == 1: self.suit = 'Clubs'
-        if suit == 2: self.suit = 'Spades'
-        if suit == 3: self.suit = 'Hearts'
-        if suit == 4: self.suit = 'Diamonds'
+        if suit == 1: self.suit_name = 'Clubs'
+        if suit == 2: self.suit_name = 'Spades'
+        if suit == 3: self.suit_name = 'Hearts'
+        if suit == 4: self.suit_name = 'Diamonds'
 
         # Define names for values
-        if self.rank == 2: self.name = 'Two'
-        if self.rank == 3: self.name = 'Three'
-        if self.rank == 4: self.name = 'Four'
-        if self.rank == 5: self.name = 'Five'
-        if self.rank == 6: self.name = 'Six'
-        if self.rank == 7: self.name = 'Seven'
-        if self.rank == 8: self.name = 'Eight'
-        if self.rank == 9: self.name = 'Nine'
-        if self.rank == 10: self.name = 'Ten'
-        if self.rank == 11: self.name = 'Jack'
-        if self.rank == 12: self.name = 'Queen'
-        if self.rank == 13: self.name = 'King'
-        if self.rank == 14: self.name = 'Ace'
+        if self.rank == 2: self.card_name = 'Two'
+        if self.rank == 3: self.card_name = 'Three'
+        if self.rank == 4: self.card_name = 'Four'
+        if self.rank == 5: self.card_name = 'Five'
+        if self.rank == 6: self.card_name = 'Six'
+        if self.rank == 7: self.card_name = 'Seven'
+        if self.rank == 8: self.card_name = 'Eight'
+        if self.rank == 9: self.card_name = 'Nine'
+        if self.rank == 10: self.card_name = 'Ten'
+        if self.rank == 11: self.card_name = 'Jack'
+        if self.rank == 12: self.card_name = 'Queen'
+        if self.rank == 13: self.card_name = 'King'
+        if self.rank == 14: self.card_name = 'Ace'
+
+        # Card Values for War
+        self.card_value = self.rank
+
+        # # **Note** For other cards games
+        # # For Jack, Queen, and King, mark card with value 10
+        # # For Ace, mark card with value 11
+        # if self.rank > 10:
+        #     self.card_value = 10
+        # elif self.rank == 14:
+        #     self.card_value = 11
+        # else:
+        #     self.card_value = self.rank
 
     # We want the print function to print the name and suit of card
     def __str__(self):
-        return self.name + " of " + self.suit
+        return self.card_name + " of " + self.suit_name
 
+    # Overriding operators due to non-canonical comparisons
     def __lt__(self, other):
-        if self.getRank() == other.getRank():
-            return self.getSuit() < other.getSuit()
+        if self.getCardValue() == other.getCardValue():
+            return self.getSuitValue() < other.getSuitValue()
         else:
-            return self.getRank() < other.getRank()
+            return self.getCardValue() < other.getCardValue()
 
     def __gt__(self, other):
-        if self.getRank() == other.getRank():
-            return self.getSuit() > other.getSuit()
+        if self.getCardValue() == other.getCardValue():
+            return self.getSuitValue() > other.getSuitValue()
         else:
-            return self.getRank() > other.getRank()
+            return self.getCardValue() > other.getCardValue()
 
     def getRank(self):
         return self.rank
 
-    def getSuit(self):
-        return self.suit
+    def getCardName(self):
+        return self.card_name
+
+    def getCardValue(self):
+        return self.card_value
+
+    def getSuitName(self):
+        return self.suit_name
+
+    def getSuitValue(self):
+        return self.suit_value
+
 
 # Helper Functions
 # Generate a random card value
 def generateCard():
-    rank = random.randrange(2,15)
+    rank = random.randrange(2,15) # return randomly selected element from range(start, stop, step)
     suit = random.randrange(1,4)
     return rank, suit
 
@@ -91,37 +115,41 @@ def generateDeck():
             deck.append(Card(rank, suit))
     return deck
 
+
 class Deck:
     def __init__(self, name):
         self.deck = generateDeck()
         self.name = name
 
     def drawCard(self):
-        card = random.choice(self.deck)
+        card = random.choice(self.deck) # returns a random element from a non-empty sequence
         self.deck.remove(card)
         return card
 
     def getDeckName(self):
         return self.name
 
-def cardGameWar():
-    print "War"
-    deck = Deck('deck1')
-    player1 = str(raw_input("Please enter player 1's name --> "))
-    player2 = str(raw_input("Please enter player 2's name --> "))
+    def getDeckSize(self):
+        return len(self.deck)
 
-    while int(raw_input("Please enter '1' to play, '0' to quit --> ")) == 1:
-        if len(deck) < 3:
-            print "Out of card!!!"
+def cardGameWar():
+    print("Card Game: War")
+    deck = Deck('deck1')
+    player1 = str(input("Please enter player 1's name --> "))
+    player2 = str(input("Please enter player 2's name --> "))
+
+    while int(input("Please enter '1' to play, '0' to quit --> ")) == 1:
+        if deck.getDeckSize() < 2:
+            print("Out of cards!!!")
             break
         else:
             card1 = deck.drawCard()
             card2 = deck.drawCard()
-            print "%s's card: %s \n%s's card: %s" % (player1, card1, player2, card2)
+            print("%s's card: %s \n%s's card: %s" % (player1, card1, player2, card2))
             if card1 > card2:
-                print "%s Wins!" % (player1)
+                print("%s Wins!" % (player1))
             else:
-                print "%s Wins!" % (player2)
+                print("%s Wins!" % (player2))
 
 
 def main():
