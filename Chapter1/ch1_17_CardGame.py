@@ -1,12 +1,10 @@
-__author__ = 'ESU_2'
-
-# Problem Solving with Algorithms and Data Structures Release 3.0
+# Problem Solving with Algorithms and Data Structures
 # Brad Miller, David Ranum
-# September 22, 2013
+# http://interactivepython.org/runestone/static/pythonds/index.html
 
-# 1.7 Programming Exercises
+# 1.17 Programming Exercises
 
-# 10. Design a class to represent a playing card. Now design a class to represent a deck of
+# 14. Design a class to represent a playing card. Now design a class to represent a deck of
 # cards. Using these two classes, implement a favorite card game.
 
 # Game: War

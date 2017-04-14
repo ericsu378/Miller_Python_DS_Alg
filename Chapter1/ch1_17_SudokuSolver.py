@@ -1,12 +1,10 @@
-__author__ = 'ESU_2'
-
-# Problem Solving with Algorithms and Data Structures Release 3.0
+# Problem Solving with Algorithms and Data Structures
 # Brad Miller, David Ranum
-# September 22, 2013
+# http://interactivepython.org/runestone/static/pythonds/index.html
 
-# 1.7 Programming Exercises
+# 1.17 Programming Exercises
 
-# 11. Find a Sudoku puzzle in the local newspaper. Write a program to solve the puzzle.
+# 15. Find a Sudoku puzzle in the local newspaper. Write a program to solve the puzzle.
 # Ref: http://norvig.com/sudoku.html
 
 # Definitions:
@@ -56,8 +54,6 @@ __author__ = 'ESU_2'
 # grid1 = '003020600900305001001806400008102900700000008006708200002609500800203009005010300'
 # search(parse_grid(grid1))
 
-
-
 import pprint as pp
 
 def test():
@@ -72,7 +68,7 @@ def test():
     assert peers['C2'] == set(['A2', 'B2', 'D2', 'E2', 'F2', 'G2', 'H2', 'I2',
                                'C1', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9',
                                'A1', 'A3', 'B1', 'B3'])
-    print 'All tests pass.'
+    print('All tests pass.')
 
 # Construct grid
 def cross(A, B):
@@ -83,40 +79,47 @@ def cross(A, B):
 digits = '123456789'
 rows = 'ABCDEFGHI'
 cols = digits
+
+# squares - Generate all possible squares
+# [squares]
 squares = cross(rows, cols)
-# All possible units (27)
+# unitlist - Generate all possible units
+# ([rows], [columns], [boxes]
 unitlist = ([cross(rows, c) for c in cols] +
             [cross(r, cols) for r in rows] +
             [cross(rs, cs) for rs in ('ABC', 'DEF', 'GHI') for cs in ('123','456','789')]
             )
-# {square: list of valid unit lists} --> units is a dictionary where each square maps to the list of units that contain the square
-# dict((s, [...]) for s in squares) --> creates a dictionary which maps each square s to a value in list [...]
-# [u for u in unitlist if s in u] --> this value is the list of units u such that the square s is a member of u
+# units - Generate a mapping for each square and its respective units
+# {square: [units]}
 units = dict((s, [u for u in unitlist if s in u]) for s in squares)
-# {square: set of all valid peers} --> peers is a dictionary where each square s maps to the set of squares formed by
-# the union of the squares in the units of s, but not s itself
-# set(sum(units[s],[]))-set([s])
-# units[s] is 3 lists, sum() joins all elements of units[s] into one list minus set([s]) and 'set' makes it unique
-# sets are unique, but you need to subtract 's'
+# peers - Generate all squares that a each square touches
+# {square: set of all valid peers}
 peers = dict((s, set(sum(units[s],[]))-set([s])) for s in squares)
 
 def parse_grid(grid):
     """
     Convert grid to a dict of possible values
+    'Constraint Propagation'
     :param grid: user entered grid
     :return: dict { squares : possible values }
     """
     # Initialize values {'A1': '123456789, ...}
     values = dict((s, digits) for s in squares)
+    # print("Values - Before:")
+    # print(values)
+    # For each non-zero values in grid_values()...
     for s,d in grid_values(grid).items():
-        # print "s, d = | %s | %s |" % (s, d)
-        if d in digits and not assign(values, s, d):
+        # print("s, d = | %s | %s |" % (s, d))
+        if d in digits and not assign(values, s, d): #if d is non-zero or assign() is true fall through...
             return False # fail if we can't assign d to square s
+    # print("Values - After:")
+    # print(values)
     return values
 
 def grid_values(grid):
     """
-    Convert 'grid' into a dict of {square : char} with '0' or '.' for empties."
+    Convert 'grid' into a dict of {square : char} with '0' or '.' for empties.
+    'grid' from string --> dict
     :param grid: user entered grid
     :return: dict {square : char}
     """
@@ -134,7 +137,11 @@ def assign(values, s, d):
     :return:
     """
     other_values = values[s].replace(d, '')
+    print("Assign - values")
+    print(values)
     if all(eliminate(values, s, d2) for d2 in other_values):
+        print("all-eliminate-return:")
+        print(values)
         return values
     else:
         return False
@@ -151,12 +158,14 @@ def eliminate(values, s, d):
         return values # Already eliminated
     values[s] = values[s].replace(d,'')
     ## (1) If a square s is reduced to one value d2, then eliminate d2 from the peers
+    # Sanity Check
     if len(values[s]) == 0:
         return False # Contradiction: removed last value
+    # Eliminate value in square s from all peers
     elif len(values[s]) == 1:
         d2 = values[s]
         if not all(eliminate(values, s2, d2) for s2 in peers[s]):
-            return False
+            return False # Fail if unable to eliminate for some reason...
     ## (2) if a unit u is reduced to only one place for a value d, then put it there.
     for u in units[s]: # for each unit list that holds 's'...
         dplaces = [s for s in u if d in values[s]] # create a list with each square that has value 'd'
@@ -173,9 +182,9 @@ def display(values):
     width = 1+max(len(values[s]) for s in squares) # incase solver has more than 1 possible value per square
     line = '+'.join(['-'*(width*3)]*3)
     for r in rows:
-        print ''.join(values[r+c].center(width)+('|' if c in '36' else '') for c in cols)
-        if r in 'CF': print line
-    print
+        print(''.join(values[r+c].center(width)+('|' if c in '36' else '') for c in cols))
+        if r in 'CF': print(line)
+    print()
 
 def solve(grid):
     return search(parse_grid(grid))
@@ -188,13 +197,18 @@ def search(values):
         return values # Sudoku is already solved
     ## Chose the unfilled square s with the fewest possibilities
     # loop through all squares, return square with smallest number of digits. n = number of digits, s = respective square
+    # 'Variable ordering'
+    # min(iterable, *[, key, default]) - Return the smallest item in an iterable
     n, s = min((len(values[s]), s) for s in squares if len(values[s]) > 1)
     # Do Constraint Propagation with new digit in new branch
+    # 'values.copy()' creates a new copy of values for each recursive call to search
+    # cycle through each value in numeric order
     return some(search(assign(values.copy(), s, d)) for d in values[s])
 
 def some(seq):
     "Return some element of seq that is true."
-    # seq would be false if branch failed
+    # Cycles through remaining values until you find the correct value for that key.
+    # 'e' would be false if branch failed
     for e in seq:
         if e:
             return e
@@ -204,7 +218,7 @@ def some(seq):
 def main():
     grid1 = '003020600900305001001806400008102900700000008006708200002609500800203009005010300'
     grid2 = '4.....8.5.3..........7......2.....6.....8.4......1.......6.3.7.5..2.....1.4......'
-    # search(parse_grid(grid1))
-    search(parse_grid(grid2))
+    # display(solve(grid1))
+    display(solve(grid2))
 
 if __name__ == '__main__': main()
