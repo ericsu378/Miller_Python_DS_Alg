@@ -1,6 +1,8 @@
-# Problem Solving with Algorithms and Data Structures
+__author__ = 'ESU'
+
+# Problem Solving with Algorithms and Data Structures [Online]
+# http://interactivepython.org/
 # Brad Miller, David Ranum
-# http://interactivepython.org/runestone/static/pythonds/index.html
 
 # Activecode 8
 # The following code fragment iterates over a list of strings and for each string processes each character

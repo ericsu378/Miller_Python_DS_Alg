@@ -1,4 +1,4 @@
-__author__ = 'ESU_2'
+__author__ = 'ESU'
 
 # Problem Solving with Algorithms and Data Structures Release 3.0
 # Brad Miller, David Ranum

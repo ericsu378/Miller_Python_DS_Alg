@@ -1,6 +1,8 @@
-# Problem Solving with Algorithms and Data Structures
+__author__ = 'ESU'
+
+# Problem Solving with Algorithms and Data Structures [Online]
+# http://interactivepython.org/
 # Brad Miller, David Ranum
-# http://interactivepython.org/runestone/static/pythonds/index.html
 
 # 1.17 Programming Exercises
 

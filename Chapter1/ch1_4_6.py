@@ -1,8 +1,8 @@
-__author__ = 'ESU_2'
+__author__ = 'ESU'
 
-# Problem Solving with Algorithms and Data Structures Release 3.0
+# Problem Solving with Algorithms and Data Structures [Online]
+# http://interactivepython.org/
 # Brad Miller, David Ranum
-# September 22, 2013
 
 # 1.4.6 Object-Oriented Programming in Python: Defining Classes
 

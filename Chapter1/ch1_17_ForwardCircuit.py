@@ -1,3 +1,5 @@
+__author__ = 'ESU'
+
 # Problem Solving with Algorithms and Data Structures [Online]
 # http://interactivepython.org/
 # Brad Miller, David Ranum
