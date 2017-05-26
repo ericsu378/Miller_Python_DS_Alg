@@ -69,6 +69,7 @@ class Fraction:
         Provides backup behaviour if __str__ is missing
         In short, str() has a readable output designed for the end user while
                   repr() returns the python code needed to rebuild the object designed for the developer
+                  if we print a list of objects, repr is used to display those object
         Ex.
                 import datetime
                 now = datetime.datetime.now()
