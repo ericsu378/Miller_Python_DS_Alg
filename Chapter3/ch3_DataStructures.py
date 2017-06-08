@@ -33,6 +33,9 @@ class Stack:
      def size(self):
          return len(self.items)
 
+     def return_obj(self):
+         return self.items
+
 
 # Implement a 'Queue' in Python
 class Queue:
@@ -46,10 +49,13 @@ class Queue:
         self.items.insert(0, item)
 
     def dequeue(self):
-        self.items.pop()
+        return self.items.pop()
 
     def size(self):
         return len(self.items)
+
+    def return_obj(self):
+        return self.items
 
 
 # Write a function revstring(mystr) that uses a stack to reverse the characters in a string
