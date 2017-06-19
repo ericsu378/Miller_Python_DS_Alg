@@ -57,6 +57,33 @@ class Queue:
     def return_obj(self):
         return self.items
 
+# Implement a 'DeQueue' in Python
+class Deque:
+    def __init__(self):
+        self.items = []
+
+    def isEmpty(self):
+        return self.items == []
+
+    def addFront(self, item):
+        self.items.append(item)
+
+    def addRear(self, item):
+        self.items.insert(0, item)
+
+    def removeFront(self):
+        return self.items.pop()
+
+    def removeRear(self):
+        return self.items.pop(0)
+
+    def size(self):
+        return len(self.items)
+
+    def return_obj(self):
+        return self.items
+
+
 
 # Write a function revstring(mystr) that uses a stack to reverse the characters in a string
 def revstring(mystr):
@@ -87,9 +114,11 @@ def revstring(mystr):
     return returnString
 
 def main():
+    pass
+
+
+if __name__ == '__main__':
     unittest.main()
-
-
-if __name__ == '__main__': main()
+    # main()
 
 
