@@ -213,6 +213,10 @@ def main():
     print("Pop() | mylist.size() = {} | mylist.search(50) = {} | mylist.index(50) = {}".format(
         mylist.size(), mylist.search(50), mylist.index(50)))
 
+    mylist.remove(77)
+    # mylist = [100, 26, 17, 77]
+    print("Remove(77) | mylist.size() = {} | mylist.search(77) = {} | mylist.index(77) = {}".format(
+        mylist.size(), mylist.search(77), mylist.index(77)))
 
 if __name__ == '__main__':
     # unittest.main()

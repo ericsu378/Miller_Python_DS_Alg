@@ -42,16 +42,16 @@ class Queue:
     def __init__(self):
         self.items = []
 
-    def isEmpty(self):
+    def isEmpty(self): # O(1)
         return self.items == []
 
-    def enqueue(self, item):
+    def enqueue(self, item): # O(n)
         self.items.insert(0, item)
 
-    def dequeue(self):
+    def dequeue(self): # O(1)
         return self.items.pop()
 
-    def size(self):
+    def size(self): # O(1)
         return len(self.items)
 
     def return_obj(self):
